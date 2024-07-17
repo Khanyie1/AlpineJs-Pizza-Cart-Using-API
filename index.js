@@ -124,7 +124,7 @@ document.addEventListener("alpine:init", () => {
                             this.message = result.data.message + " Sorry - that is not enough money!";
                             setTimeout(() => this.message = '', 6000)
                         } else if (result.data.status == "success") {
-                            const change = this.paymentAmount - this.cartTotal;
+                            const change = this.paymentAmount - this.cartTotal.toFixed(2);
                             this.message = `Payment received, but you have change of : R${change} Enjoy your Pizzas!`
 
                             setTimeout(() => {

@@ -131,29 +131,39 @@ document.addEventListener("alpine:init", () => {
                 )
             },
 
+            HistoricalCart() {
+                let order = {
+                    pizzas: [...this.cartPizzas.map(pizza => ({
+                        flavour: pizza.flavour,
+                        price: pizza.price,
+                        qty: pizza.qty
+                    }))],
+                    total: parseFloat(this.cartTotal),
+                    date: new Date().toLocaleDateString()
+                };
+                this.historicalOrders.push(order);
+            },
+
             payForCart() {
                 this.pay(this.paymentAmount)
                     .then(result => {
-                        if ( result.data.status == 'failure' && this.paymentAmount > 0) {
+                        if (this.paymentAmount >= 0 && this.cartTotal === 0) {
+                            this.message = "Your cart is cleared, check your receipt!";
+                            setTimeout(() => this.message = '', 4000)
+                        }
+
+                        else if (result.data.status == 'failure' && this.paymentAmount > 0) {
                             this.message = result.data.message + " Sorry - that is not enough money!";
                             setTimeout(() => this.message = '', 4000)
-
-                        } else if (result.data.status == "success" && this.paymentAmount > this.cartTotal) {
+                        }
+                        
+                        else if (result.data.status == "success" && this.paymentAmount > this.cartTotal) {
                             const change = this.paymentAmount - this.cartTotal;
                             this.message = `Payment received, but you have change of : R${change.toFixed(2)} Enjoy your Pizzas!`
 
-                            let order = {
-                                pizzas: [...this.cartPizzas.map(pizza => ({
-                                    flavour: pizza.flavour,
-                                    price: pizza.price,
-                                    qty: pizza.qty
-                                }))],
-                                total: parseFloat(this.cartTotal),
-                                date: new Date().toLocaleDateString()
-                            };
+                            this.HistoricalCart();
 
-                            // Add current cart items to historical orders
-                            this.historicalOrders.push(order);
+                            this.showHistoricalOrdersButton = true;
 
                             setTimeout(() => {
                                 this.message = '';
@@ -166,7 +176,9 @@ document.addEventListener("alpine:init", () => {
 
                         } else if(result.data.status == "success" && this.paymentAmount === this.cartTotal) {
                             this.message = 'Payment received, Enjoy your Pizzas!';
+                            this.HistoricalCart();
 
+                            this.showHistoricalOrdersButton = true;
                             setTimeout(() => {
                                 this.message = '';
                                 this.cartPizzas = [];
@@ -175,15 +187,17 @@ document.addEventListener("alpine:init", () => {
                                 this.paymentAmount = 0
                                 this.createCart();
                             }, 4000)
-                        } else if ( result.data.status == 'failure' && this.paymentAmount === 0) {
+
+                        } else if ((result.data.status == 'failure' && this.paymentAmount === 0) || (result.data.status == 'failure' && this.paymentAmount === '') || (result.data.status == 'failure' && this.paymentAmount == 0)) {
                             this.message = "Sorry - you have to put amount to pay!";
                             setTimeout(() => this.message = '', 4000)
                         } else if(this.paymentAmount === 0) {
                             this.message = "Your cart is empty, add some items!";
                             setTimeout(() => this.message = '', 4000)
-                        }
-
-                        this.showHistoricalOrdersButton = true;
+                        } else if (this.paymentAmount === '' && this.cartTotal == 0.00) {
+                            this.message = "Your cart is empty, add some items!";
+                            setTimeout(() => this.message = '', 4000)
+                        } 
                     }
                 )
             },

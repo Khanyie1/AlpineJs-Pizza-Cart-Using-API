@@ -7,7 +7,7 @@ GET https://pizza-api.projectcodex.net/api/pizzas
 GET https://pizza-api.projectcodex.net/api/pizza-cart/create?username=Khanyie1
 
 ### Get a cart
-GET https://pizza-api.projectcodex.net/api/pizza-cart/YPJyPY3vnG/get
+GET https://pizza-api.projectcodex.net/api/pizza-cart/sp2m0YR0Af/get
 
 
 ### Add a pizza to the cart
@@ -15,18 +15,8 @@ POST https://pizza-api.projectcodex.net/api/pizza-cart/add
 Content-Type: application/json
 
 {
-    "cart_code": "YPJyPY3vnG",
-    "pizza_id": 10
-}
-
-### Add a pizza to the cart
-
-POST https://pizza-api.projectcodex.net/api/pizza-cart/add
-content-type : application/json
-
-{
-    "cart_code" : "YPJyPY3vnG",
-    "pizza_id" : 7
+    "cart_code": "sp2m0YR0Af",
+    "pizza_id": 1
 }
 
 ### Remove from the cart
@@ -35,8 +25,8 @@ POST https://pizza-api.projectcodex.net/api/pizza-cart/remove
 Content-Type: application/json
 
 {
-    "cart_code" : "YPJyPY3vnG",
-    "pizza_id" : 27
+    "cart_code" : "sp2m0YR0Af",
+    "pizza_id" : 1
 }
 
 ### GET all the carts for a given user
@@ -51,7 +41,7 @@ POST https://pizza-api.projectcodex.net/api/pizza-cart/pay
 content-type: application/json
 
 {
-    "cart_code" : "YPJyPY3vnG",
+    "cart_code" : "sp2m0YR0Af",
     "amount" : 400
 }
 

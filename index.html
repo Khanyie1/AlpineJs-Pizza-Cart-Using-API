@@ -15,20 +15,97 @@
     <script src="index.js"></script>
     <title>Pizza Widget Using API</title>
 </head>
-<body class="bg-blue-400">
-    <div x-data="pizzaCart" class="container">
+<body x-data="pizzaCart" class="bg-blue-400">
+    <div  class="container">
         <div class="header text-center font-bold size justify-center mt-10 mb-10">
-            <h1 x-text="title" class="text-4xl pb-3"></h1>
+            <h1 x-text="header" class="text-4xl pb-3"></h1>
         </div>
     </div>
 
-    <div x-data="pizzaCart" 
-        class="container bg-yellow-300">
-        <div x-data="{header: 'Shopping Cart'}">
-            <h1 x-text="header" class="text-center font-bold text-2xl headerTitle mb-10"></h1>
+    <div class="container bg-yellow-300">
+        <div>
+            <h1 x-text="title" class="text-center font-bold text-2xl headerTitle mb-10"></h1>
         </div>
-        
-        <div x-data="pizzaCart" class="row">
+
+        <div x-show="showHistoricalOrdersButton" class="flex justify-center">
+            <button @click="toggleHistoricalOrders" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">Show Historical Orders</button>
+        </div>
+
+        <div x-show="showHistoricalOrders" class="mt-4">
+            <h2 class="text-xl font-semibold mb-2 flex justify-center">Historical Orders</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-200">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-2 border-b">Order Date</th>
+                            <th class="px-4 py-2 border-b">Pizzas</th>
+                            <th class="px-4 py-2 border-b">Price</th>
+                            <th class="px-4 py-2 border-b">Items</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="order in historicalOrders">
+                            <tr class="bg-gray-50 hover:bg-gray-200">
+                                <td class="px-4 py-2 border-b">
+                                    <ul class="list-disc list-inside">
+                                        <li>
+                                            <span x-text="order.date"></span>
+                                        </li>
+                                    </ul>
+                                </td>
+                                
+                                <td class="px-4 py-2 border-b">
+                                    <ul class="list-disc list-inside">
+                                        <template x-for="pizza in order.pizzas">
+                                            <li>
+                                                <span x-text="pizza.flavour"></span>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </td>
+
+                                <td class="px-4 py-2 border-b">
+                                    <ul class="list-disc list-inside">
+                                        <template x-for="pizza in order.pizzas">
+                                            <li>
+                                                <span x-text="pizza.price"></span>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </td>
+
+                                <td class="px-4 py-2 border-b">
+                                    <ul class="list-disc list-inside">
+                                        <template x-for="pizza in order.pizzas">
+                                            <li>
+                                                <span x-text="pizza.qty"></span>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+
+                    <tfooter>
+                        <tr>
+                            <th class="px-4 py-2 border-b">Total</th>
+                            <td>
+                                <ul class="list-disc list-inside">
+                                    <template x-for="order in historicalOrders">
+                                        <li>
+                                            R<span x-text="order.total.toFixed(2)"></span>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tfooter>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col s12 l12">
                     <div x-show="message"
                             class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-transform" 
@@ -102,19 +179,19 @@
                    </table>
             </div>
         </div>
-    </div>    
+    </div> 
 
-    <div x-data="pizzaCart" 
+    <div 
         class="container bg-blue-200"
         >
 
-        <div x-data="pizzaCart" class="flex flex-wrap justify-center space-x-4 -mx-2">
-            <template x-for="pizza in featuredPizzas">
+        <div class="flex flex-wrap justify-center">
+            <template x-for="pizza in featuredPizzas" >
                 <div class="w-full sm:w-1/2 md:w-1/2 lg:w-1/4 px-2 mb-4">
                     <div class="card">
-                        <div class="card-image p-10" style="display: grid; place-items: center;">
+                        <div class="card-image">
                             <div class="pizza-image">
-                                <img src="images/pizza-images/SupremePizza.jpg" alt="small pizza" class="flex justify-center">
+                                <img src="images/pizza-images/SupremePizza.jpg" alt="small pizza">
                             </div>
                             <span class="btn-floating halfway-fab waves-effect waves-light red favorite-btn">
                                 <i class="material-icons">favorite_border</i>
@@ -148,7 +225,7 @@
         </div>
 
         <div class="col s12 l4">
-            <div x-data="pizzaCart">
+            <div>
                 <template x-for="(pizza, index) in pizzas">
                     <div :class="index % 2 === 0 ? 'bg-slate-300' : 'bg-gray-200'"
                         class="flex mx-5 mb-4 p-4 rounded-lg items-center pizza_item">

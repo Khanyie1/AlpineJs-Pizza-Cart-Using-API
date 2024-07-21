@@ -15,14 +15,52 @@
     <script src="index.js"></script>
     <title>Pizza Widget Using API</title>
 </head>
-<body x-data="pizzaCart" class="bg-blue-400">
+<body x-data="pizzaCart" class="bg-blue-400" x-cloak>
     <div  class="container">
         <div class="header text-center font-bold size justify-center mt-10 mb-10">
             <h1 x-text="header" class="text-4xl pb-3"></h1>
         </div>
     </div>
 
-    <div class="container bg-yellow-300">
+    <div class="container bg-lime-200 mb-10 rounded">
+        <fieldset class="py-3 flex items-center justify-center">
+            <div class="flex-col items-center mb-2 py-4 px-6 bg-white border border-gray-300 rounded-lg shadow-lg">
+                <label for="username" class="block text-gray-700 font-semibold mb-2">Username:</label>
+                <input 
+                    id="username"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                    type="text" 
+                    x-model="username"
+                >
+                <button @click="login" 
+                    class="bg-green-400 py-4 px-4 rounded-lg font-bold hover:bg-green-600" 
+                    x-show="username"
+                >
+                    login
+                </button>
+                <button @click="logout" 
+                    class="bg-green-400 py-4 px-4 rounded-lg font-bold hover:bg-green-600" 
+                    x-show="username && cardId"
+                >
+                    logout
+                </button>
+            </div>
+            
+            <!-- <div x-show="cardId" class="flex flex-col items-center py-4 px-6 bg-white border border-gray-300 rounded-lg shadow-lg">
+                <label for="" class="block text-gray-700 font-semibold mb-2">Cart code</label> 
+                <span x-text="cardId"></span>
+            </div> -->
+        </fieldset>
+
+        <div class="flex items-center justify-center py-10">
+            <div x-show="cardId" class="flex flex-col items-center py-4 px-6 bg-white border border-gray-300 rounded-lg shadow-lg">
+                <label for="" class="block text-gray-700 font-semibold mb-2">Cart code</label> 
+                <span x-text="cardId"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container bg-yellow-300" x-show="username && cardId">
         <div>
             <h1 x-text="title" class="text-center font-bold text-2xl headerTitle mb-10"></h1>
         </div>
@@ -182,7 +220,7 @@
     </div> 
 
     <div 
-        class="container bg-blue-200"
+        class="container bg-blue-200" x-show="username && cardId"
         >
 
         <div class="flex flex-wrap justify-center">
@@ -205,7 +243,7 @@
                                     <span x-text="pizza.size" class="text-3xl font-semibold"></span>
                                 </div>
         
-                                <div x-text="pizza.price" class="text-xl font-bold pb-2"></div>
+                                <div class="text-xl font-bold pb-2">R<span x-text="pizza.price"></span></div>
                                 <p x-html="pizza.flavour" class="bg-gray-200 p-4 my-6 rounded font-semibold"></p>
                             </div>
                         </div>
@@ -234,13 +272,13 @@
                         <div class="flex flex-col justify-center ml-4">
                             <div class="flex items-center">
                                 <h5 class="text-lg font-semibold text-gray-800 mr-4" x-text="pizza.flavour"></h5>
-                                <a href="#" 
-                                   x-on:click.prevent="toggleFavorite(pizza.id)" 
+                                <button 
+                                   x-on:click="toggleFavorite(pizza.id); addfavorite(pizza.id)" 
                                    :class="pizza.isFavorite ? 'bg-red-500 text-white' : 'bg-gray-500 text-white'"
                                    class="p-2 rounded-full cursor-pointer transition duration-200"
                                 >
                                     <i class="material-icons" x-text="pizza.isFavorite ? 'favorite' : 'favorite_border'"></i>
-                                </a>
+                            </button>
                             </div>
                         </div>
                        

@@ -54,6 +54,6 @@ POST https://pizza-api.projectcodex.net/api/pizzas/featured
 content-type: application/json
 
 {
-    "username": "Khanyie1",
+    "username": "Khanyie",
     "pizza_id": 4
 }

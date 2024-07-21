@@ -25,7 +25,8 @@ document.addEventListener("alpine:init", () => {
             header: "Perfect Pizza",
             title: "Shopping Cart",
             pizzas: [],
-            username: 'Khanyie1',
+            //username: 'Khanyie1',
+            username: '',
             //cardId: 'sp2m0YR0Af',
             cardId: '',
             cartPizzas : [],
@@ -37,12 +38,43 @@ document.addEventListener("alpine:init", () => {
             showHistoricalOrders: false,
             showHistoricalOrdersButton: false,
 
-            createCart(){
-                const createCartURL = `https://pizza-api.projectcodex.net/api/pizza-cart/create?username=${this.username}`
-                return axios.get(createCartURL)
+            login() {
+                if(this.username.length > 3) {
+                    localStorage['username'] = this.username;
+                    this.clearUserData();
+                    this.createCart();
+                }
+                else {
+                    alert("Username is too short");
+                }
+            },
+
+            logout() {
+                if(confirm('Do you want to logout?')) {
+                    this.username = '';
+                    this.cardId = '';
+                    localStorage['cardId'] = '';
+                    localStorage['username'] = '';
+                }
+            },
+
+            createCart() {
+                if(!this.username) {
+                    return Promise.resolve();
+                }
+                const cardId = localStorage['cardId'];
+
+                if (cardId && localStorage['username'] === this.username) {
+                    this.cardId = cardId;
+                    return Promise.resolve();
+                } else {
+                    const createCartURL = `https://pizza-api.projectcodex.net/api/pizza-cart/create?username=${this.username}`
+                    return axios.get(createCartURL)
                             .then(result => {
                                 this.cardId = result.data.cart_code;
+                                localStorage['cardId'] = this.cardId;
                             });
+                }
             },
 
             featuredGet() {
@@ -59,8 +91,7 @@ document.addEventListener("alpine:init", () => {
                 this.getCart().then(result => {
                     const cartData = result.data;
                     this.cartPizzas = cartData.pizzas;
-                    this.cartTotal = cartData.total.toFixed(2);
-                    this.itemTotal 
+                    this.cartTotal = cartData.total.toFixed(2); 
                 })
             },
 
@@ -88,6 +119,13 @@ document.addEventListener("alpine:init", () => {
             },
 
             init() {
+
+                const storedUsername = localStorage['username'];
+
+                if(storedUsername) {
+                    this.username = storedUsername;
+                }
+                
                 axios
                     .get('https://pizza-api.projectcodex.net/api/pizzas')
                     .then(result => {
@@ -102,9 +140,27 @@ document.addEventListener("alpine:init", () => {
                         }
                     )
                     this.featuredGet().then(res=>{
-                        this.featuredPizzas = res.data.pizzas
+                        console.log(res.data);
+                        this.featuredPizzas = res.data.pizzas;
+                        // this.showCartData();
                     })
                 }
+            },
+
+            showFav() {
+                this.featuredGet().then(res=>{
+                    console.log(res.data);
+                    this.featuredPizzas = res.data.pizzas;
+                })
+            },
+
+            addfavorite(favPizzaId){
+                return axios.post('https://pizza-api.projectcodex.net/api/pizzas/featured', {
+                    "username": this.username,
+                    "pizza_id" : favPizzaId
+                }).then(()=>{
+                    this.showFav();
+                })
             },
 
             addPizzaToCart(pizzaId) {
@@ -169,8 +225,9 @@ document.addEventListener("alpine:init", () => {
                                 this.message = '';
                                 this.cartPizzas = [];
                                 this.cartTotal = 0.00;
-                                this.cardId = '';
-                                this.paymentAmount = 0
+                                //this.cardId = '';
+                                this.paymentAmount = 0;
+                                localStorage['cardId'] = '';
                                 this.createCart();
                             }, 4000)
 
@@ -178,13 +235,15 @@ document.addEventListener("alpine:init", () => {
                             this.message = 'Payment received, Enjoy your Pizzas!';
                             this.HistoricalCart();
 
+                            // this.showCartDetails = true;
                             this.showHistoricalOrdersButton = true;
                             setTimeout(() => {
                                 this.message = '';
                                 this.cartPizzas = [];
                                 this.cartTotal = 0.00;
-                                this.cardId = '';
-                                this.paymentAmount = 0
+                                //this.cardId = '';
+                                this.paymentAmount = 0;
+                                localStorage['cardId'] = '';
                                 this.createCart();
                             }, 4000)
 
@@ -211,6 +270,18 @@ document.addEventListener("alpine:init", () => {
 
             toggleHistoricalOrders() {
                 this.showHistoricalOrders = !this.showHistoricalOrders;
+            },
+
+            clearUserData() {
+                this.historicalOrders = [];
+                this.cartPizzas = [];
+                this.cartTotal = 0.00;
+                this.paymentAmount = 0;
+                this.message = '';
+                this.featuredPizzas = [];
+                this.showHistoricalOrders = false;
+                this.showHistoricalOrdersButton = false;
+                this.cardId = '';
             }
         }
     })

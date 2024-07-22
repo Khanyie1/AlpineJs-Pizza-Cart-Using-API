@@ -25,24 +25,30 @@ document.addEventListener("alpine:init", () => {
             header: "Perfect Pizza",
             title: "Shopping Cart",
             pizzas: [],
-            //username: 'Khanyie1',
             username: '',
-            //cardId: 'sp2m0YR0Af',
             cardId: '',
             cartPizzas : [],
             cartTotal: 0.00,
             paymentAmount: 0,
             message: '',
+            ErrorMessage: '',
             featuredPizzas:[],
             historicalOrders: [],
             showHistoricalOrders: false,
             showHistoricalOrdersButton: false,
+            isUserLoggedIn: false,
+            loginfield: true,
 
             login() {
-                if(this.username.length > 3) {
+                if(this.username.length > 3 ) {
                     localStorage['username'] = this.username;
-                    this.clearUserData();
+                    this.username = this.username;
+                    this.isUserLoggedIn = true; 
+                    this.loginfield = false;
+                    this.showHistoricalOrdersButton = false;
+                    this.showHistoricalOrders = false;            
                     this.createCart();
+
                 }
                 else {
                     alert("Username is too short");
@@ -53,8 +59,11 @@ document.addEventListener("alpine:init", () => {
                 if(confirm('Do you want to logout?')) {
                     this.username = '';
                     this.cardId = '';
-                    localStorage['cardId'] = '';
-                    localStorage['username'] = '';
+                    this.isUserLoggedIn = false;
+                    this.loginfield = true;
+                    this.showHistoricalOrdersButton = false;
+                    this.showHistoricalOrders = false;
+                    this.historicalOrders = []; 
                 }
             },
 
@@ -64,7 +73,7 @@ document.addEventListener("alpine:init", () => {
                 }
                 const cardId = localStorage['cardId'];
 
-                if (cardId && localStorage['username'] === this.username) {
+                if (cardId) {
                     this.cardId = cardId;
                     return Promise.resolve();
                 } else {
@@ -142,7 +151,6 @@ document.addEventListener("alpine:init", () => {
                     this.featuredGet().then(res=>{
                         console.log(res.data);
                         this.featuredPizzas = res.data.pizzas;
-                        // this.showCartData();
                     })
                 }
             },
@@ -203,24 +211,27 @@ document.addEventListener("alpine:init", () => {
             payForCart() {
                 this.pay(this.paymentAmount)
                     .then(result => {
-                        if (this.paymentAmount >= 0 && this.cartTotal === 0) {
-                            this.message = "Your cart is cleared, check your receipt!";
-                            setTimeout(() => this.message = '', 4000)
+                        if (this.paymentAmount == 0 && this.cartTotal === 0) {
+                            this.ErrorMessage = "Your cart is cleared, check your receipt!";
+                            setTimeout(() => this.ErrorMessage = '', 4000)
+                        }
+
+                        else if((this.paymentAmount >= 0 && this.cartTotal === 0) || (this.cartTotal == 0.00 && this.paymentAmount > 0)) {
+                            this.ErrorMessage = "Your cart is empty, add item so you can make payment!";
+                            setTimeout(() => this.ErrorMessage = '', 4000)
                         }
 
                         else if (result.data.status == 'failure' && this.paymentAmount > 0) {
-                            this.message = result.data.message + " Sorry - that is not enough money!";
-                            setTimeout(() => this.message = '', 4000)
+                            this.ErrorMessage = result.data.message + " Sorry - that is not enough money!";
+                            setTimeout(() => this.ErrorMessage = '', 4000)
                         }
                         
-                        else if (result.data.status == "success" && this.paymentAmount > this.cartTotal) {
+                        else if (this.cartTotal > 0.00 && this.paymentAmount > this.cartTotal) {
                             const change = this.paymentAmount - this.cartTotal;
                             this.message = `Payment received, but you have change of : R${change.toFixed(2)} Enjoy your Pizzas!`
 
                             this.HistoricalCart();
 
-                            this.showHistoricalOrdersButton = true;
-
                             setTimeout(() => {
                                 this.message = '';
                                 this.cartPizzas = [];
@@ -230,13 +241,14 @@ document.addEventListener("alpine:init", () => {
                                 localStorage['cardId'] = '';
                                 this.createCart();
                             }, 4000)
+
+                            this.showHistoricalOrdersButton = true;
 
                         } else if(result.data.status == "success" && this.paymentAmount === this.cartTotal) {
                             this.message = 'Payment received, Enjoy your Pizzas!';
+
                             this.HistoricalCart();
 
-                            // this.showCartDetails = true;
-                            this.showHistoricalOrdersButton = true;
                             setTimeout(() => {
                                 this.message = '';
                                 this.cartPizzas = [];
@@ -247,15 +259,17 @@ document.addEventListener("alpine:init", () => {
                                 this.createCart();
                             }, 4000)
 
+                            this.showHistoricalOrdersButton = true;
+
                         } else if ((result.data.status == 'failure' && this.paymentAmount === 0) || (result.data.status == 'failure' && this.paymentAmount === '') || (result.data.status == 'failure' && this.paymentAmount == 0)) {
-                            this.message = "Sorry - you have to put amount to pay!";
-                            setTimeout(() => this.message = '', 4000)
+                            this.ErrorMessage = "Sorry - you have to put amount to pay!";
+                            setTimeout(() => this.ErrorMessage = '', 4000)
                         } else if(this.paymentAmount === 0) {
-                            this.message = "Your cart is empty, add some items!";
-                            setTimeout(() => this.message = '', 4000)
+                            this.ErrorMessage = "Your cart is empty, add some items!";
+                            setTimeout(() => this.ErrorMessage = '', 4000)
                         } else if (this.paymentAmount === '' && this.cartTotal == 0.00) {
-                            this.message = "Your cart is empty, add some items!";
-                            setTimeout(() => this.message = '', 4000)
+                            this.ErrorMessage = "Your cart is empty, add some items!";
+                            setTimeout(() => this.ErrorMessage = '', 4000)
                         } 
                     }
                 )
@@ -271,18 +285,6 @@ document.addEventListener("alpine:init", () => {
             toggleHistoricalOrders() {
                 this.showHistoricalOrders = !this.showHistoricalOrders;
             },
-
-            clearUserData() {
-                this.historicalOrders = [];
-                this.cartPizzas = [];
-                this.cartTotal = 0.00;
-                this.paymentAmount = 0;
-                this.message = '';
-                this.featuredPizzas = [];
-                this.showHistoricalOrders = false;
-                this.showHistoricalOrdersButton = false;
-                this.cardId = '';
-            }
         }
     })
 })

@@ -64,6 +64,7 @@ document.addEventListener("alpine:init", () => {
                     this.showHistoricalOrdersButton = false;
                     this.showHistoricalOrders = false;
                     this.historicalOrders = []; 
+                    this.featuredPizzas = []
                 }
             },
 

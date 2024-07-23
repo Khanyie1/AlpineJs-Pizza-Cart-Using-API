@@ -66,9 +66,17 @@
             <h1 x-text="title" class="text-center font-bold text-2xl headerTitle mb-10"></h1>
         </div>
 
-        <div x-show="showHistoricalOrdersButton" class="flex justify-center">
-            <button @click="toggleHistoricalOrders" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">Show Receipt</button>
+
+        <div class="flex justify-center px-10 py-3">
+            <div x-show="showHistoricalOrdersButton" class="flex justify-center">
+                <button @click="toggleHistoricalOrders" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 mr-2">Show Receipt</button>
+            </div>
+        
+            <div x-show="showHistoricalOrdersButton" class="flex justify-center">
+                <button @click="CartButton" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 ml-2">Cart</button>
+            </div>
         </div>
+        
 
         <div x-show="showHistoricalOrders" class="mt-4">
             <h2 class="text-xl font-semibold mb-2 flex justify-center">Historical Order</h2>
@@ -144,7 +152,7 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row" x-show="HideCartEmpty">
             <div class="col s12 l12">
                     <div x-show="message"
                             class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-transform" 

@@ -38,6 +38,7 @@ document.addEventListener("alpine:init", () => {
             showHistoricalOrdersButton: false,
             isUserLoggedIn: false,
             loginfield: true,
+            HideCartEmpty: true,
 
             login() {
                 if(this.username.length > 3 ) {
@@ -65,6 +66,7 @@ document.addEventListener("alpine:init", () => {
                     this.showHistoricalOrders = false;
                     this.historicalOrders = []; 
                     this.featuredPizzas = []
+                    // this.HideCartEmpty = false;
                 }
             },
 
@@ -178,6 +180,7 @@ document.addEventListener("alpine:init", () => {
                     .then(() => {
                         console.log('Pizza added, updating cart data...');
                         this.showCartData();
+                        this.HideCartEmpty = true;
                     })
                     .then(() => {
                         console.log('Updated cartPizzas:', this.cartPizzas);
@@ -265,7 +268,7 @@ document.addEventListener("alpine:init", () => {
                         } else if ((result.data.status == 'failure' && this.paymentAmount === 0) || (result.data.status == 'failure' && this.paymentAmount === '') || (result.data.status == 'failure' && this.paymentAmount == 0)) {
                             this.ErrorMessage = "Sorry - you have to put amount to pay!";
                             setTimeout(() => this.ErrorMessage = '', 4000)
-                        } else if(this.paymentAmount === 0) {
+                        } else if(this.paymentAmount == 0) {
                             this.ErrorMessage = "Your cart is empty, add some items!";
                             setTimeout(() => this.ErrorMessage = '', 4000)
                         } else if (this.paymentAmount === '' && this.cartTotal == 0.00) {
@@ -286,6 +289,10 @@ document.addEventListener("alpine:init", () => {
             toggleHistoricalOrders() {
                 this.showHistoricalOrders = !this.showHistoricalOrders;
             },
+
+            CartButton() {
+                this.HideCartEmpty = !this.HideCartEmpty;
+            }
         }
     })
 })

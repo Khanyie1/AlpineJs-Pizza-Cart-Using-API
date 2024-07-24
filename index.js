@@ -42,6 +42,8 @@ document.addEventListener("alpine:init", () => {
             history: [],
             HistCart: true,
             showHistoricalCart: true,
+            showMainContent: false,
+            LoginState: true,
 
 
             login() {
@@ -52,9 +54,10 @@ document.addEventListener("alpine:init", () => {
                     this.loginfield = false;
                     this.showHistoricalOrdersButton = false;
                     this.showHistoricalOrders = false;
+                    this.LoginState = false;
+                    this.showMainContent = true;
                     this.fetchCart()            
                     this.createCart();
-
                 }
                 else {
                     alert("Username is too short");
@@ -72,7 +75,9 @@ document.addEventListener("alpine:init", () => {
                     this.historicalOrders = []; 
                     this.featuredPizzas = [];
                     this.history = [];
-                    // this.HideCartEmpty = false;
+                    localStorage['cardId'] = '';
+                    this.LoginState = true;
+                    this.showMainContent = false;
                 }
             },
 
@@ -99,7 +104,7 @@ document.addEventListener("alpine:init", () => {
                 const featuredURL = `https://pizza-api.projectcodex.net/api/pizzas/featured?username=${this.username}`
                 return axios.get(featuredURL); 
             },
-            //have to init this function
+            
             fetchCart(){
                 axios.get(`https://pizza-api.projectcodex.net/api/pizza-cart/username/${this.username}`)
                 .then((res) => {
@@ -184,8 +189,6 @@ document.addEventListener("alpine:init", () => {
                         this.featuredPizzas = res.data.pizzas;
                     })
                 }
-                ////
-                // this.fetchCart()
             },
 
             showFav() {
@@ -270,12 +273,9 @@ document.addEventListener("alpine:init", () => {
                                 this.message = '';
                                 this.cartPizzas = [];
                                 this.cartTotal = 0.00;
-                                //this.cardId = '';
                                 this.paymentAmount = 0;
-                                localStorage['cardId'] = '';
-                                this.createCart();
                             }, 4000)
-
+                            this.fetchCart()
                             this.showHistoricalOrdersButton = true;
 
                         } else if(result.data.status == "success" && this.paymentAmount === this.cartTotal) {
@@ -287,12 +287,9 @@ document.addEventListener("alpine:init", () => {
                                 this.message = '';
                                 this.cartPizzas = [];
                                 this.cartTotal = 0.00;
-                                //this.cardId = '';
                                 this.paymentAmount = 0;
-                                localStorage['cardId'] = '';
-                                this.createCart();
                             }, 4000)
-
+                            this.fetchCart()
                             this.showHistoricalOrdersButton = true;
 
                         } else if ((result.data.status == 'failure' && this.paymentAmount === 0) || (result.data.status == 'failure' && this.paymentAmount === '') || (result.data.status == 'failure' && this.paymentAmount == 0)) {

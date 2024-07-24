@@ -99,4 +99,16 @@
     display: none !important;
 }
 
+#firstsection {
+    background-image: url("images/pizza-images/SupremePizza.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+
+
+
+
+
 

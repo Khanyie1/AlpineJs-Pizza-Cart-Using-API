@@ -39,6 +39,10 @@ document.addEventListener("alpine:init", () => {
             isUserLoggedIn: false,
             loginfield: true,
             HideCartEmpty: true,
+            history: [],
+            HistCart: true,
+            showHistoricalCart: true,
+
 
             login() {
                 if(this.username.length > 3 ) {
@@ -47,7 +51,8 @@ document.addEventListener("alpine:init", () => {
                     this.isUserLoggedIn = true; 
                     this.loginfield = false;
                     this.showHistoricalOrdersButton = false;
-                    this.showHistoricalOrders = false;            
+                    this.showHistoricalOrders = false;
+                    this.fetchCart()            
                     this.createCart();
 
                 }
@@ -65,7 +70,8 @@ document.addEventListener("alpine:init", () => {
                     this.showHistoricalOrdersButton = false;
                     this.showHistoricalOrders = false;
                     this.historicalOrders = []; 
-                    this.featuredPizzas = []
+                    this.featuredPizzas = [];
+                    this.history = [];
                     // this.HideCartEmpty = false;
                 }
             },
@@ -92,6 +98,28 @@ document.addEventListener("alpine:init", () => {
             featuredGet() {
                 const featuredURL = `https://pizza-api.projectcodex.net/api/pizzas/featured?username=${this.username}`
                 return axios.get(featuredURL); 
+            },
+            //have to init this function
+            fetchCart(){
+                axios.get(`https://pizza-api.projectcodex.net/api/pizza-cart/username/${this.username}`)
+                .then((res) => {
+                    console.log("Response", res);
+                    const carts = res.data;
+
+                    carts.forEach((cart) => {
+                        if (cart.status === 'paid') {
+                            console.log('Paid cart:', cart);
+                            const cardCode = cart.cart_code;
+
+                            axios.get(`https://pizza-api.projectcodex.net/api/pizza-cart/${cardCode}/get`)
+                            .then((res) => {
+                                const cartData = res.data;
+                                console.log('Cart Data', cartData);
+                                this.history.push(cartData);
+                            })
+                        }
+                    })
+                })
             },
 
             getCart() {
@@ -156,6 +184,8 @@ document.addEventListener("alpine:init", () => {
                         this.featuredPizzas = res.data.pizzas;
                     })
                 }
+                ////
+                // this.fetchCart()
             },
 
             showFav() {
@@ -292,6 +322,10 @@ document.addEventListener("alpine:init", () => {
 
             CartButton() {
                 this.HideCartEmpty = !this.HideCartEmpty;
+            },
+
+            HistoryCartButton() {
+                this.HistCart = !this.HistCart;
             }
         }
     })

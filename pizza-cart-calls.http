@@ -34,7 +34,7 @@ Content-Type: application/json
 GET https://pizza-api.projectcodex.net/api/pizza-cart/username/Khanyie1
 
 ### GET all the active carts for a user
-GET https://pizza-api.projectcodex.net/api/pizza-cart/username/Khanyie1/active
+GET https://pizza-api.projectcodex.net/api/pizza-cart/username/Khanyie10111/
 
 ### Pay for a pizza from the cart
 POST https://pizza-api.projectcodex.net/api/pizza-cart/pay
@@ -42,7 +42,7 @@ content-type: application/json
 
 {
     "cart_code" : "sp2m0YR0Af",
-    "amount" : 400
+    "amount" : 7000
 }
 
 
@@ -54,6 +54,9 @@ POST https://pizza-api.projectcodex.net/api/pizzas/featured
 content-type: application/json
 
 {
-    "username": "Khanyie",
+    "username": "Khanyie1",
     "pizza_id": 4
 }
+
+###
+GET https://pizza-api.projectcodex.net/api/pizza-cart/username/

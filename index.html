@@ -73,8 +73,35 @@
             </div>
         
             <div x-show="showHistoricalOrdersButton" class="flex justify-center">
-                <button @click="CartButton" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 ml-2">Cart</button>
+                <button @click="CartButton" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 ml-2">Empty Cart</button>
             </div>
+
+            <div x-show="showHistoricalCart" class="flex justify-center">
+                <button @click="HistoryCartButton" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 ml-2">Paid Cart</button>
+            </div>
+        </div>
+
+        <div class="flex justify-center p-8" x-show="HistCart">
+            <table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2 border-b-2 border-gray-300 bg-gray-100 text-left text-sm font-semibold text-gray-600">Username</th>
+                        <th class="px-4 py-2 border-b-2 border-gray-300 bg-gray-100 text-left text-sm font-semibold text-gray-600">Status</th>
+                        <!-- <th class="px-4 py-2 border-b-2 border-gray-300 bg-gray-100 text-left text-sm font-semibold text-gray-600">Qty</th> -->
+                        <th class="px-4 py-2 border-b-2 border-gray-300 bg-gray-100 text-left text-sm font-semibold text-gray-600">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="pizza in history">
+                        <tr>
+                            <td class="px-4 py-2 border-b border-gray-200 text-sm text-gray-700 hover:bg-gray-200" x-text="pizza.username"></td>
+                            <td class="px-4 py-2 border-b border-gray-200 text-sm text-gray-700 hover:bg-gray-200" x-text="pizza.status"></td>
+                            <!-- <td class="px-4 py-2 border-b border-gray-200 text-sm text-gray-700 hover:bg-gray-200" x-text="pizzas.length"></td> -->
+                            <td class="px-4 py-2 border-b border-gray-200 text-sm text-gray-700 hover:bg-gray-200">R<span x-text="pizza.total.toFixed(2)"></span></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
         </div>
         
 
@@ -110,6 +137,8 @@
                                         </template>
                                     </ul>
                                 </td>
+
+
 
                                 <td class="px-4 py-2 border-b">
                                     <ul class="list-disc list-inside">
